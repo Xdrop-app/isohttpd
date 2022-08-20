@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:body_parser/body_parser.dart';
+// import 'package:body_parser/body_parser.dart';
 import 'package:path/path.dart' as p;
 
 /// A json response builder
@@ -14,9 +14,9 @@ Future<HttpResponse> jsonResponse(HttpRequest request, dynamic data) async {
 }
 
 /// Decode post requests
-Future<BodyParseResult> decodeMultipartRequest(HttpRequest request) async =>
-    // ignore: deprecated_member_use
-    parseBody(request);
+// Future<BodyParseResult> decodeMultipartRequest(HttpRequest request) async =>
+//     // ignore: deprecated_member_use
+//     parseBody(request);
 
 /// A convenience function to list a directory
 Future<Map<String, List<Map<String, dynamic>>>> directoryListing(

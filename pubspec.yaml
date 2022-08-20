@@ -13,7 +13,7 @@ dependencies:
   pedantic: ^1.9.2
   extra_pedantic: ^1.2.0
   meta: ^1.2.4
-  body_parser: ^1.1.1
+  # body_parser: ^1.1.1
   iso: ^0.3.0
   path: ^1.7.0
   emodebug: ^0.5.0
