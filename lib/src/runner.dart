@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:emodebug/emodebug.dart';
 import 'package:iso/iso.dart';
 import 'package:meta/meta.dart';
 import 'package:pedantic/pedantic.dart';
-import 'package:emodebug/emodebug.dart';
 
 import 'models/request_log.dart';
 import 'models/router.dart';
@@ -108,7 +108,11 @@ class IsoHttpd {
       //chan.send("RCHAN > server started");
     }
     isoRunner.dataIn.listen((dynamic data) async {
-      //print("R > DATA IN $data");
+      print("R > DATA IN $data");
+      if (data == '**disconnect**') {
+        print('DISPOSE4 DISCONNECTED**');
+        await server.dispose();
+      }
       final cmd = data as HttpdCommand;
       switch (cmd) {
         case HttpdCommand.start:
@@ -225,15 +229,18 @@ class IsoHttpd {
 
   /// Kill the server
   void kill() {
-    iso.dispose();
     _dispose();
   }
 
   /// Dispose streams
-  void _dispose() {
-    _dataOutSub.cancel();
-    _requestLogsController.close();
-    _logsController.close();
+  Future<void> _dispose() async {
+    print('DISPOSE3');
+    await _dataOutSub.cancel();
+    await _requestLogsController.close();
+    await _logsController.close();
+    iso.send('**disconnect**');
+    await Future.delayed(const Duration(milliseconds: 500));
+    iso.dispose();
   }
 
   void _addToLogs(dynamic obj) => _logsController.sink.add(obj);
