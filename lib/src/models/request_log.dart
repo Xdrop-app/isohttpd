@@ -6,15 +6,15 @@ import '../types.dart';
 class ServerRequestLog {
   /// Default constructor
   ServerRequestLog(
-      {@required this.requestUrl,
-      @required this.message,
-      @required this.statusCode,
-      @required this.logClass}) {
+      {required this.requestUrl,
+      required this.message,
+      required this.statusCode,
+      required this.logClass}) {
     time = DateTime.now().toLocal();
   }
 
   /// The time of the request
-  DateTime time;
+  late DateTime time;
 
   /// The url
   String requestUrl;
@@ -31,7 +31,7 @@ class ServerRequestLog {
   @override
   String toString() {
     final date = "${time.hour}:${time.minute}:${time.second}";
-    String msgClass;
+    String msgClass = 'unknown';
     switch (logClass) {
       case LogMessageClass.success:
         msgClass = "[OK]";

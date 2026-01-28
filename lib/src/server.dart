@@ -17,13 +17,13 @@ import 'types.dart';
 class IsoHttpdServer {
   /// Provide a [host] and a [router]
   IsoHttpdServer(
-      {@required this.host,
-      @required this.router,
-      @required this.chan,
+      {required this.host,
+      required this.router,
+      required this.chan,
       this.apiKey,
       this.port = 8084,
-      this.textDebug = false})
-      : assert(host != null) {
+      this.textDebug = false}) {
+    // assert(host != null);
     log = IsoLogger(chan: chan);
     requestLogger =
         IsoRequestLogger(logChannel: _requestsLogChannel, chan: chan);
@@ -47,27 +47,27 @@ class IsoHttpdServer {
   final IsoRouter router;
 
   /// The server api key
-  final String apiKey;
+  final String? apiKey;
 
   /// Disable emojis in debug
   final bool textDebug;
 
   /// The logger
-  IsoLogger log;
+  late IsoLogger log;
 
   /// The requests logger
-  IsoRequestLogger requestLogger;
+  late IsoRequestLogger requestLogger;
 
-  Stream<HttpRequest> _incomingRequests;
+  late Stream<HttpRequest> _incomingRequests;
   bool _isRunning = false;
   bool _isInitialized = false;
   final _onStartedCompleter = Completer<void>();
   final _readyCompleter = Completer<void>();
   final _requestsLogChannel = StreamController<ServerRequestLog>.broadcast();
   final _logsChannel = StreamController<dynamic>.broadcast();
-  StreamSubscription _incomingRequestsSub;
-  HttpServer _server;
-  EmoDebug _;
+  late StreamSubscription _incomingRequestsSub;
+  HttpServer? _server;
+  late EmoDebug _;
 
   /// The logs stream
   Stream<dynamic> get logs => _logsChannel.stream;
@@ -172,8 +172,8 @@ class IsoHttpdServer {
         return;
       }
       // find a handler
-      IsoRequestHandler handler;
-      IsoRequestHandler defaultHandler;
+      IsoRequestHandler? handler;
+      IsoRequestHandler? defaultHandler;
       var found = false;
       for (final route in router.routes) {
         if (route.path == request.uri.path) {
@@ -195,7 +195,7 @@ class IsoHttpdServer {
         return;
       }
       // run the handler
-      handler(request, log).then((HttpResponse response) {
+      handler!(request, log).then((HttpResponse response) {
         if (response.statusCode != HttpStatus.ok) {
           requestLogger.error("Status code ${response.statusCode}", request);
         } else if (response != null) {

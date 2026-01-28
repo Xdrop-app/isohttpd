@@ -15,8 +15,8 @@ import 'types.dart';
 class IsoHttpd {
   /// Default constructor
   IsoHttpd(
-      {@required this.host,
-      @required this.router,
+      {required this.host,
+      required this.router,
       this.apiKey,
       this.port = 8084,
       this.textDebug = false}) {
@@ -37,21 +37,21 @@ class IsoHttpd {
   final IsoRouter router;
 
   /// an optional api key
-  final String apiKey;
+  final String? apiKey;
 
   /// Disable emojis in debug
   final bool textDebug;
 
   /// The main iso instance
-  Iso iso;
+  late Iso iso;
 
   final _logsController = StreamController<dynamic>.broadcast();
   final _requestLogsController = StreamController<ServerRequestLog>.broadcast();
-  StreamSubscription<dynamic> _dataOutSub;
+  late StreamSubscription<dynamic> _dataOutSub;
   var _serverStartedCompleter = Completer<void>();
   final _ready = Completer<void>();
-  bool _isRunning;
-  EmoDebug _;
+  bool _isRunning = false;
+  late EmoDebug _;
 
   /// Server logs stream
   Stream<dynamic> get logs => _logsController.stream;
@@ -75,15 +75,15 @@ class IsoHttpd {
     String _host;
     int _port;
     IsoRouter _router;
-    String _apiKey;
+    String? _apiKey;
     bool _startServer;
-    final data = isoRunner.args[0] as Map<String, dynamic>;
+    final data = isoRunner.args![0] as Map<String, dynamic>;
     _host = data["host"] as String;
     _port = data["port"] as int;
     _router = data["router"] as IsoRouter;
     _startServer = data["start_server"] as bool;
-    if (data.containsKey("api_key") == true) {
-      _apiKey = data["api_key"] as String;
+    if (data.containsKey("api_key")) {
+      _apiKey = data["api_key"] as String?;
     }
     /*print("ROUTER $_router");
     for (final r in _router.routes) {
@@ -107,7 +107,7 @@ class IsoHttpd {
       isoRunner.send(ServerStatus.started);
       //chan.send("RCHAN > server started");
     }
-    isoRunner.dataIn.listen((dynamic data) async {
+    isoRunner.dataIn?.listen((dynamic data) async {
       print("R > DATA IN $data");
       if (data == '**disconnect**') {
         print('DISPOSE4 DISCONNECTED**');
@@ -125,7 +125,7 @@ class IsoHttpd {
             } catch (_) {
               rethrow;
             }
-            unawaited(server.onStarted
+            unawaited((server.onStarted ?? Future.value())
                 .then((_) => isoRunner.send(ServerStatus.started)));
           }
           break;
@@ -158,8 +158,8 @@ class IsoHttpd {
 
   /// Run the server in an isolate
   Future<void> run({bool startServer = true}) async {
-    assert(host != null);
-    assert(router != null);
+    // assert(host != null);
+    // assert(router != null);
     iso = Iso(_run, onDataOut: (dynamic data) => null);
 
     // logs relay
@@ -197,7 +197,7 @@ class IsoHttpd {
             break;
         }
       } else if (data is ServerState) {
-        String status;
+        String status = 'unknown';
         switch (data.status) {
           case ServerStatus.started:
             status = "running";
@@ -236,8 +236,12 @@ class IsoHttpd {
   Future<void> _dispose() async {
     print('DISPOSE3');
     await _dataOutSub.cancel();
-    await _requestLogsController.close();
-    await _logsController.close();
+    if (!_logsController.isClosed) {
+      await _logsController.close();
+    }
+    if (!_requestLogsController.isClosed) {
+      await _requestLogsController.close();
+    }
     iso.send('**disconnect**');
     await Future.delayed(const Duration(milliseconds: 500));
     iso.dispose();

@@ -11,7 +11,7 @@ import 'types.dart';
 class IsoRequestLogger {
   /// Default constructor
   IsoRequestLogger(
-      {@required this.logChannel, this.chan, this.verbose = false});
+      {required this.logChannel, required this.chan, this.verbose = false});
 
   /// The logs stream
   final StreamController<ServerRequestLog> logChannel;

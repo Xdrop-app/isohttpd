@@ -4,16 +4,16 @@ version: 0.5.0
 homepage: https://github.com/synw/isohttpd
 
 environment:
-  sdk: ">=2.2.0 <3.0.0"
+  sdk: ^3.5.4
 
 dev_dependencies:
-  test: ^1.6.5
+  test: 
 
 dependencies:
-  pedantic: ^1.9.2
-  extra_pedantic: ^1.2.0
-  meta: ^1.2.4
+  pedantic: 
+  extra_pedantic: 
+  meta: 
   # body_parser: ^1.1.1
-  iso: ^0.3.0
-  path: ^1.7.0
-  emodebug: ^0.5.0
+  iso: 
+  path: 
+  emodebug: 
